@@ -1,31 +1,150 @@
-import './App.css';
+import { FormControl, Select, MenuItem } from '@material-ui/core';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import {Provider} from 'react-redux'
+import About from './About'
+import Contact from './Contact'
+import Home from './Home'
+import store from './redux/store'
+//const store = createStore(reducer)
+import Header from './Header'
+import Analytics from './analytics'
+import What from './what'
+import Boxes from './Boxes'
+import React, { Component, useState, useEffect } from 'react';
+import  './App.css'
+import Map from './Map'
 function App() {
-  return (
+  let currentStore = store.getState()
+  const [countries, setCountries] = useState([]);
+  const [country, setCountry] = useState('worldwide');
+  const [countryInfo, setCountryInfo] = useState({});
+
+//https://disease.sh/v3/covid-19/countries
+//https://disease.sh/v3/covid-19/all
+
+useEffect(() => 
+{
+	const getCountriesData = async () => 
+	{
+		await fetch("https://disease.sh/v3/covid-19/countries").then((response) => response.json()).then((data) => {
+			const countries = data.map((country) => 
+			(
+
+				{
+				name: country.country,
+				value: country.countryInfo.iso2
+				}
+
+			));
+			setCountries(countries);
+		});
+	};
+	getCountriesData();
+},[]);
+
+	const countryChange = async (event) => {
+		const countryID = event.target.value;
+		// setCountry(countryID);
+		const url =  countryID === 'worldwide' 
+		? "https://disease.sh/v3/covid-19/all" 
+		: `https://disease.sh/v3/covid-19/countries/${countryID}`;
+
+		await fetch(url).then(response => response.json()).then(data => {
+
+			setCountry(countryID);
+			setCountryInfo(data);
+			console.log('countryInfo', countryInfo);
+		})
+
+	};
+
+  return ( 
+    
+
     <div className="app">
-      <h1> COVID-19 Live Tracker</h1> 
+		<div className = "app__left">
 
-      {/*STRUCTURE*/}
+		
+			<div className="aheader">
+			<h1>COVID-19 LIVE TRACKER</h1>
+				<FormControl className = "app__dropdown">
 
-        {/* HEADER */}
-          {/* TITLE + LOGO */}
-          {/* HOME PAGE */}
-          {/* WHAT IS COVID PAGE */}
-          {/* ANALYTICS PAGE */}
-          {/* ABOUT PAGE */}
-          {/* CONTACT PAGE */}
+					<Select variant = "outlined" onChange = {countryChange} value = {country}>
 
-        {/* 3 DATA BOXES */}
+							<MenuItem value = "worldwide"> Worldwide </MenuItem>
+							{	
+								countries.map((country) => (
+								<MenuItem value = {country.value}> {country.name} </MenuItem> ))
+							}
+
+					</Select>
+
+				</FormControl> 
+			</div>
+
+			<div className = "boxes">
+
+				<Boxes title = "Coronavirus Cases" cases = {countryInfo.todayCases} total = {countryInfo.cases} />
+				<Boxes title = "Recovered" cases = {countryInfo.todayRecovered}  total = {countryInfo.recovered}/>
+				<Boxes title = "Deaths" cases = {countryInfo.todayDeaths} total = {countryInfo.deaths}/>
+
+			</div>
+			<Map/>
+		</div>
+
+		<div className = "app__right">
+
+		{/* 1+ GRAPH */}
+        {/* LIST TABLE */}
+
+		</div>
+
+      
+         {/* <div className="App"> */}
+		<Provider store={store}>
+		<Router >
+			<div className="app">
+			{/* <Header /> */}
+
+				<Switch>
+				{/* <Route exact path="/" component={Home} /> */}
+				<Route path="/home" component={Home} />
+
+				<Route path="/about" component={About} />
+				<Route path="/contact" component={Contact} /> 
+				<Route path="/analytics" component={Analytics} /> 
+				<Route path="/what" component={What} /> 
+
+				</Switch>
+			</div> 
+		</Router>
+		</Provider>
+
+
+
+      {/* // STRUCTURE*/}
+
+         {/* HEADER */}
+
+             {/* TITLE + LOGO */}
+             {/* HOME PAGE */}
+             {/* WHAT IS COVID PAGE */}
+             {/* ANALYTICS PAGE */}
+             {/* ABOUT PAGE */}
+            {/* CONTACT PAGE */}
+
+         {/* 3 DATA BOXES */}
 
         {/* 1+ GRAPH */}
 
-        {/* LIST TABLE */}
+         {/* LIST TABLE */}
 
-        {/* MAP */}
+         {/* MAP */}
 
 
 
     </div>
-  );
+  )
 }
 
 export default App;
