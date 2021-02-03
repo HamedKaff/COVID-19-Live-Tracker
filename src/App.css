@@ -49,3 +49,19 @@
   justify-content: space-between;
 
 }
+.app {
+  display:flex;
+  justify-content: space-evenly;
+  /* flex-wrap: wrap; */
+  padding: 20px;
+}
+
+@media (max-width: 990px){
+  .app{
+    flex-direction: column;
+  }
+}
+
+.app__left{
+  flex: 0.9;
+}

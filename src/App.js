@@ -1,4 +1,4 @@
-import { FormControl, Select, MenuItem } from '@material-ui/core';
+import { FormControl, Select, MenuItem, Card, CardContent } from '@material-ui/core';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import {Provider} from 'react-redux'
 import About from './About'
@@ -10,37 +10,50 @@ import Header from './Header'
 import Analytics from './analytics'
 import What from './what'
 import Boxes from './Boxes'
+import Table from './Table'
 import React, { Component, useState, useEffect } from 'react';
 import  './App.css'
 import Map from './Map'
+import {sortData} from './util';
+import LineGraph from './LineGraph'
 function App() {
   let currentStore = store.getState()
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
+  const [tableData, setTableData] = useState([]);
 
 //https://disease.sh/v3/covid-19/countries
 //https://disease.sh/v3/covid-19/all
 
-useEffect(() => 
-{
-	const getCountriesData = async () => 
+	useEffect(() => 
 	{
-		await fetch("https://disease.sh/v3/covid-19/countries").then((response) => response.json()).then((data) => {
-			const countries = data.map((country) => 
-			(
+		const getCountriesData = async () => 
+		{
+			await fetch("https://disease.sh/v3/covid-19/countries").then((response) => response.json()).then((data) => {
+				const countries = data.map((country) => 
+				(
 
-				{
-				name: country.country,
-				value: country.countryInfo.iso2
-				}
+					{
+					name: country.country,
+					value: country.countryInfo.iso2
+					}
 
-			));
-			setCountries(countries);
-		});
-	};
-	getCountriesData();
-},[]);
+				));
+				const sortedData  = sortData(data);
+				setTableData(sortedData);
+				setCountries(countries);
+			});
+		};
+		getCountriesData();
+	},[]);
+
+	useEffect(() => {
+		fetch("https://disease.sh/v3/covid-19/all").then(response => response.json()).then(data => {
+			setCountryInfo(data);
+		})
+
+	},[]);
 
 	const countryChange = async (event) => {
 		const countryID = event.target.value;
@@ -84,20 +97,27 @@ useEffect(() =>
 
 			<div className = "boxes">
 
-				<Boxes title = "Coronavirus Cases" cases = {countryInfo.todayCases} total = {countryInfo.cases} />
-				<Boxes title = "Recovered" cases = {countryInfo.todayRecovered}  total = {countryInfo.recovered}/>
-				<Boxes title = "Deaths" cases = {countryInfo.todayDeaths} total = {countryInfo.deaths}/>
+				<Boxes title = "Coronavirus Cases" cases = {countryInfo.todayCases}      total = {countryInfo.cases} />
+				<Boxes title = "Recovered" 		   cases = {countryInfo.todayRecovered}  total = {countryInfo.recovered}/>
+				<Boxes title = "Deaths" 		   cases = {countryInfo.todayDeaths}     total = {countryInfo.deaths}/>
 
 			</div>
 			<Map/>
 		</div>
 
-		<div className = "app__right">
+		<Card className = "app__right">
+			<CardContent>
+				<h3>Live Cases by Country</h3>
+				<Table countries = {tableData}/>
+				<LineGraph/>
+ 
+			</CardContent>
+
 
 		{/* 1+ GRAPH */}
         {/* LIST TABLE */}
 
-		</div>
+		</Card>
 
       
          {/* <div className="App"> */}
