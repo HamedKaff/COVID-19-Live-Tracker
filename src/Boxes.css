@@ -1,0 +1,15 @@
+.card{
+    flex: 1;
+    /* background: gray;
+    color:aquamarine;
+    background-color: aquamarine; */
+    
+}
+
+.card:not(:last-child) {
+    margin-right: 10px;
+}
+.box__total, .box__cases, .box__title{
+    color:black;
+}
+

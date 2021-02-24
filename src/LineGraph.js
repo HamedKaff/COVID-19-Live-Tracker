@@ -98,24 +98,17 @@ function LineGraph({casesType = 'cases'}) {
     
 
     return (
-        <div>
-            <h4>Worldwide Cases in the Last 12 Months</h4>
+        <div> 
+            <h4>Worldwide {casesType} in the Last 12 Months</h4>
             {data?.length > 0 && (
                 <Line 
                     options = {options}
                     data = {{
                         datasets: [{
-                          backgroundColor: "rgba(204, 16, 52, 0.5)",
-                          borderColor: "#CC1034",
+                          backgroundColor: "rgb(81,209,146,0.5)",
+                          borderColor: "#4FC48A",
+                          borderWidth: 2,
                           data: data,
-                            chart: {
-                                // background: "#4AD295"
-                            },
-                            // borderColor: "#4AD295",
-                            // backgroundColor: "#4AD295",
-                            // color: "#f4f4f4",
-                            // fillColor: "#4AD295",
-                            // foreColor: "#333"
         
                         }]
                     }}
