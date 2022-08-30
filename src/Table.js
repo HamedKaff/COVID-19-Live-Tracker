@@ -5,7 +5,7 @@ import numeral from "numeral";
 function Table({countries}) {
 
     return (
-        <div className = "table">
+        <div className = "table" >
         {countries.map(({country, cases}) => (
             <tr>
                 <td> {country} </td>

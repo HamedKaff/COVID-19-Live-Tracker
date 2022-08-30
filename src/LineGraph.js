@@ -98,8 +98,8 @@ function LineGraph({casesType = 'cases'}) {
     
 
     return (
-        <div> 
-            <h4>Worldwide {casesType} in the Last 12 Months</h4>
+        <div style = {{marginTop: 30}}> 
+            <h4 style = {{marginBottom: 20}}>Worldwide {casesType} in the Last 12 Months</h4>
             {data?.length > 0 && (
                 <Line 
                     options = {options}
